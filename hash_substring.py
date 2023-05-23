@@ -1,32 +1,44 @@
-# python3
-
+# Nikita Ščipanovs 221RDB061
 def read_input():
-    # this function needs to aquire input both from keyboard and file
-    # as before, use capital i (input from keyboard) and capital f (input from file) to choose which input type will follow
-    
-    
-    # after input type choice
-    # read two lines 
-    # first line is pattern 
-    # second line is text in which to look for pattern 
-    
-    # return both lines in one return
-    
-    # this is the sample return, notice the rstrip function
-    return (input().rstrip(), input().rstrip())
+    input_format = input().upper().rstrip()
+    if 'F' in input_format:
+        input_file = '06'
+        input_file = "tests/" + input_file
+        try:
+            with open(input_file, "r") as f:
+                pattern = f.readline().rstrip()
+                text = f.readline().rstrip()
+        except FileNotFoundError:
+            return "File not found error"
+    elif input_format == 'I':
+        pattern = input().rstrip()
+        text = input().rstrip()
+    else:
+        return "Invalid input format"
+    return pattern, text
 
 def print_occurrences(output):
-    # this function should control output, it doesn't need any return
     print(' '.join(map(str, output)))
 
 def get_occurrences(pattern, text):
-    # this function should find the occurances using Rabin Karp alghoritm 
+    p = len(pattern)
+    t = len(text)
+    p_hash = sum(ord(pattern[i]) * pow(101, i) for i in range(p))
+    t_hash = sum(ord(text[i]) * pow(101, i) for i in range(p))
+    output = []
 
-    # and return an iterable variable
-    return [0]
+    for i in range(t - p + 1):
+        if p_hash == t_hash:
+            if text[i:i+p] == pattern:
+                output.append(i)
 
+        if i < t - p:
+            t_hash = t_hash - ord(text[i]) * pow(101, 0)
+            t_hash = t_hash // 101
+            t_hash += ord(text[i+p]) * pow(101, p-1)
 
-# this part launches the functions
+    return output
+
+# This part launches the functions
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
-
